@@ -1,11 +1,10 @@
 import logging
 
 import borgmatic.actions.pattern
-import borgmatic.borg.pattern
 import borgmatic.borg.diff
+import borgmatic.borg.pattern
 
 logger = logging.getLogger(__name__)
-
 
 
 def run_diff(
@@ -23,9 +22,7 @@ def run_diff(
 
     # Collect and process patterns.
     processed_patterns = borgmatic.actions.pattern.process_patterns(
-        (
-            *borgmatic.actions.pattern.collect_patterns(config),
-        ),
+        (*borgmatic.actions.pattern.collect_patterns(config),),
         config,
         borgmatic.config.paths.get_working_directory(config),
     )

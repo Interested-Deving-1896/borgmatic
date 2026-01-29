@@ -1976,7 +1976,6 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
         aliases=ACTION_ALIASES['diff'],
         help='This command finds differences (file contents, user/group/mode) between archives',
         description='This command finds differences (file contents, user/group/mode) between archives',
-        add_help=False,
     )
     diff_group = diff_parser.add_argument_group('diff arguments')
     diff_group.add_argument(
@@ -1986,6 +1985,10 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
     diff_group.add_argument(
         '--archive',
         help='Archive name, hash, or series to diff, defaults to all archives in the repository (if specified)',
+    )
+    diff_group.add_argument(
+        '--second-archive',
+        help='Second archive name, hash, or series to diff',
     )
 
     borg_parser = action_parsers.add_parser(

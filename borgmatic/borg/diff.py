@@ -76,6 +76,7 @@ def diff(
                 else flags.make_repository_flags(repository, local_borg_version)
             )
         )
+        + (diff_arguments.second_archive, )
     )
 
     borgmatic.execute.execute_command(
