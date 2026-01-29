@@ -33,6 +33,7 @@ ACTION_ALIASES = {
     'key': [],
     'borg': [],
     'recreate': [],
+    'diff': [],
 }
 
 
@@ -1968,6 +1969,23 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
         '--help',
         action='help',
         help='Show this help message and exit',
+    )
+
+    diff_parser = action_parsers.add_parser(
+        'diff',
+        aliases=ACTION_ALIASES['diff'],
+        help='This command finds differences (file contents, user/group/mode) between archives',
+        description='This command finds differences (file contents, user/group/mode) between archives',
+        add_help=False,
+    )
+    diff_group = diff_parser.add_argument_group('diff arguments')
+    diff_group.add_argument(
+        '--repository',
+        help='Path of repository containing archive to diff, defaults to the configured repository if there is only one, quoted globs supported',
+    )
+    diff_group.add_argument(
+        '--archive',
+        help='Archive name, hash, or series to diff, defaults to all archives in the repository (if specified)',
     )
 
     borg_parser = action_parsers.add_parser(
