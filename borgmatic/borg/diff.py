@@ -67,9 +67,9 @@ def diff(
                 else flags.make_repository_flags(repository, local_borg_version)
             )
         )
-        + (('--same-chunker-params', diff_arguments.timestamp) if diff_arguments.same_chunker_params else ())
+        + (('--same-chunker-params',) if diff_arguments.same_chunker_params else ())
         + (('--sort-by', diff_arguments.sort_by) if diff_arguments.sort_by else ())
-        + (('--content-only', diff_arguments.content_only) if diff_arguments.content_only else ())
+        + (('--content-only',) if diff_arguments.content_only else ())
         + (diff_arguments.second_archive, )
     )
 
