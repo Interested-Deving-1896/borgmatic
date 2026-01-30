@@ -1990,7 +1990,23 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
         '--second-archive',
         help='Second archive name, hash, or series to diff',
     )
-
+    diff_group.add_argument(
+        '--numeric-ids',
+        help='Only consider numeric user and group identifiers',
+    )
+    diff_group.add_argument(
+        '--same-chunker-params',
+        help='Override check of chunker parameters'
+    )
+    diff_group.add_argument(
+        '--sort-by',
+        metavar='FIELD[,FIELD...]',
+        help='Advanced sorting: specify field(s) to sort by. Accepts a comma-separated list. Prefix with > for descending or < for ascending (default).'
+    )
+    diff_group.add_argument(
+        '--content-only',
+        help='Only compare differences in content (exclude metadata differences)'
+    )
     borg_parser = action_parsers.add_parser(
         'borg',
         aliases=ACTION_ALIASES['borg'],

@@ -46,15 +46,6 @@ def diff(
         + (('--info',) if logger.getEffectiveLevel() == logging.INFO else ())
         + (('--debug', '--show-rc') if logger.isEnabledFor(logging.DEBUG) else ())
         + (('--patterns-from', patterns_file.name) if patterns_file else ())
-        + (
-            (
-                '--list',
-                '--filter',
-                flags.make_list_filter_flags(local_borg_version, global_arguments.dry_run),
-            )
-            if config.get('list_details')
-            else ()
-        )
         + exclude_flags
         + (tuple(shlex.split(extra_borg_options)) if extra_borg_options else ())
         + (
@@ -76,6 +67,9 @@ def diff(
                 else flags.make_repository_flags(repository, local_borg_version)
             )
         )
+        + (('--same-chunker-params', diff_arguments.timestamp) if diff_arguments.same_chunker_params else ())
+        + (('--sort-by', diff_arguments.sort_by) if diff_arguments.sort_by else ())
+        + (('--content-only', diff_arguments.content_only) if diff_arguments.content_only else ())
         + (diff_arguments.second_archive, )
     )
 
