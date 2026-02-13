@@ -1984,16 +1984,13 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
     )
     diff_group.add_argument(
         '--archive',
-        help='Archive name, hash, or series to diff, defaults to all archives in the repository (if specified)',
+        help='Archive name, hash, or series to diff',
+        required=True,
     )
     diff_group.add_argument(
         '--second-archive',
         help='Second archive name, hash, or series to diff',
-    )
-    diff_group.add_argument(
-        '--numeric-ids',
-        action='store_true',
-        help='Only consider numeric user and group identifiers',
+        required=True,
     )
     diff_group.add_argument(
         '--same-chunker-params',
@@ -2002,8 +1999,10 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
     )
     diff_group.add_argument(
         '--sort-by',
-        metavar='KEYS',
-        help='Advanced sorting: specify field(s) to sort by. Accepts a comma-separated list. Prefix with > for descending or < for ascending (default).'
+        metavar='KEY',
+        dest='sort_keys',
+        action='append',
+        help='Advanced sorting: specify field(s) to sort by. Prefix with > for descending or < for ascending (default).'
     )
     diff_group.add_argument(
         '--content-only',
