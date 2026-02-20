@@ -34,11 +34,14 @@ def diff(
     exclude_flags = flags.make_exclude_flags(config)
     extra_borg_options = config.get('extra_borg_options', {}).get('diff', '')
 
-    # Write patterns to a temporary file and use that file with --patterns-from.
-    patterns_file = write_patterns_file(
-        patterns,
-        borgmatic.config.paths.get_working_directory(config),
-    )
+    if diff_arguments.only_patterns:
+        # Write patterns to a temporary file and use that file with --patterns-from.
+        patterns_file = write_patterns_file(
+            patterns,
+            borgmatic.config.paths.get_working_directory(config),
+        )
+    else:
+        patterns_file = None
 
     if borgmatic.borg.feature.available(borgmatic.borg.feature.Feature.NUMERIC_IDS, local_borg_version):
         numeric_ids_flags = ('--numeric-ids',) if config.get('numeric_ids') else ()
@@ -52,7 +55,7 @@ def diff(
         + (('--lock-wait', str(lock_wait)) if lock_wait is not None else ())
         + (('--info',) if logger.getEffectiveLevel() == logging.INFO else ())
         + (('--debug', '--show-rc') if logger.isEnabledFor(logging.DEBUG) else ())
-        + (('--patterns-from', patterns_file.name) if patterns_file else ())
+        + (('--patterns-from', patterns_file.name) if patterns_file and diff_arguments.only_patterns else ())
         + exclude_flags
         + numeric_ids_flags
         + (tuple(shlex.split(extra_borg_options)) if extra_borg_options else ())
