@@ -43,7 +43,9 @@ def diff(
     else:
         patterns_file = None
 
-    if borgmatic.borg.feature.available(borgmatic.borg.feature.Feature.NUMERIC_IDS, local_borg_version):
+    if borgmatic.borg.feature.available(
+        borgmatic.borg.feature.Feature.NUMERIC_IDS, local_borg_version
+    ):
         numeric_ids_flags = ('--numeric-ids',) if config.get('numeric_ids') else ()
     else:
         numeric_ids_flags = ('--numeric-owner',) if config.get('numeric_ids') else ()
@@ -55,7 +57,11 @@ def diff(
         + (('--lock-wait', str(lock_wait)) if lock_wait is not None else ())
         + (('--info',) if logger.getEffectiveLevel() == logging.INFO else ())
         + (('--debug', '--show-rc') if logger.isEnabledFor(logging.DEBUG) else ())
-        + (('--patterns-from', patterns_file.name) if patterns_file and diff_arguments.only_patterns else ())
+        + (
+            ('--patterns-from', patterns_file.name)
+            if patterns_file and diff_arguments.only_patterns
+            else ()
+        )
         + exclude_flags
         + numeric_ids_flags
         + (tuple(shlex.split(extra_borg_options)) if extra_borg_options else ())
@@ -77,7 +83,7 @@ def diff(
         + (('--same-chunker-params',) if diff_arguments.same_chunker_params else ())
         + (('--sort-by', ','.join(diff_arguments.sort_keys)) if diff_arguments.sort_keys else ())
         + (('--content-only',) if diff_arguments.content_only else ())
-        + (diff_arguments.second_archive, )
+        + (diff_arguments.second_archive,)
     )
 
     borgmatic.execute.execute_command(

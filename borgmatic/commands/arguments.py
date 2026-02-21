@@ -1993,26 +1993,24 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
         required=True,
     )
     diff_group.add_argument(
-        '--same-chunker-params',
-        action='store_true',
-        help='Override check of chunker parameters'
+        '--same-chunker-params', action='store_true', help='Override check of chunker parameters'
     )
     diff_group.add_argument(
         '--sort-by',
         metavar='KEY',
         dest='sort_keys',
         action='append',
-        help='Advanced sorting: specify field(s) to sort by. Prefix with > for descending or < for ascending (default)'
+        help='Advanced sorting: specify field(s) to sort by. Prefix with > for descending or < for ascending (default)',
     )
     diff_group.add_argument(
         '--content-only',
         action='store_true',
-        help='Only compare differences in content (exclude metadata differences)'
+        help='Only compare differences in content (exclude metadata differences)',
     )
     diff_group.add_argument(
         '--only-patterns',
         action='store_true',
-        help='Run the diff according to borgmatic configured patterns (ie do not diff entire archives)'
+        help='Run the diff according to borgmatic configured patterns (ie do not diff entire archives)',
     )
     borg_parser = action_parsers.add_parser(
         'borg',

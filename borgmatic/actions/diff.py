@@ -2,7 +2,6 @@ import logging
 
 import borgmatic.actions.pattern
 import borgmatic.borg.diff
-import borgmatic.borg.pattern
 
 logger = logging.getLogger(__name__)
 
