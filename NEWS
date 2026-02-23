@@ -3,6 +3,7 @@
    handy for fetching borgmatic configuration from external scripts. See the documentation for more
    information:
    https://torsion.org/borgmatic/reference/command-line/actions/config-show/
+ * #1236: Fix the "spot" check to skip hard links, as Borg doesn't produces hashes for them.
  * #1269: Fix the ZFS hook to support datasets with a "canmount" property of "noauto".
  * #1270: Follow symlinks when backing up borgmatic configuration files to support the "bootstrap"
    action.

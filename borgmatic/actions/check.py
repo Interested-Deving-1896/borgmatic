@@ -525,6 +525,7 @@ def compare_spot_check_hashes(
         source_sample_paths_subset = tuple(
             itertools.islice(source_sample_paths_iterator, SAMPLE_PATHS_SUBSET_COUNT),
         )
+
         if not source_sample_paths_subset:
             break
 
@@ -597,23 +598,27 @@ def compare_spot_check_hashes(
                     source_hashes[hash_path] = ''
 
         # Get the hash for each file in the archive.
-        archive_hashes.update(
-            **{
-                entry['path']: entry['xxh64']
-                for entry in borgmatic.borg.list.capture_archive_listing(
-                    repository['path'],
-                    archive,
-                    config,
-                    local_borg_version,
-                    global_arguments,
-                    list_paths=source_sample_paths_subset,
-                    path_format='{xxh64}{path}',
-                    local_path=local_path,
-                    remote_path=remote_path,
-                )
-                if entry
-            },
-        )
+        for entry in borgmatic.borg.list.capture_archive_listing(
+            repository['path'],
+            archive,
+            config,
+            local_borg_version,
+            global_arguments,
+            list_paths=source_sample_paths_subset,
+            path_format='{xxh64}{path}{linktarget}',
+            local_path=local_path,
+            remote_path=remote_path,
+        ):
+            if not entry:
+                continue
+
+            # Borg can't get hashes of stored hard links. So if this is a hard link path (and not
+            # deemed as the "original" by Borg), then skip hashing of it.
+            if entry['linktarget']:
+                source_hashes.pop(os.path.join('/', entry['path']), None)
+                continue
+
+            archive_hashes[entry['path']] = entry['xxh64']
 
     # Compare the source hashes with the archive hashes to see how many match.
     failing_paths = []
