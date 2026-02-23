@@ -1061,8 +1061,9 @@ def test_compare_spot_check_hashes_returns_paths_having_failing_hashes():
         'hash2  /bar',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'nothash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {},
+        {'xxh64': 'nothash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1104,8 +1105,8 @@ def test_compare_spot_check_hashes_handles_weird_backslashed_hashes_from_xxh64su
         '\\hash2  /bar',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'nothash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'nothash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1147,8 +1148,8 @@ def test_compare_spot_check_hashes_handles_incorrect_path_names_from_xxh64sum():
         'hash2  /bar/wrong/path',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'nothash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'nothash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1200,8 +1201,8 @@ def test_compare_spot_check_hashes_with_xxh64sum_failure_falls_back_to_individua
     ).once()
 
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'hash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'hash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1243,8 +1244,8 @@ def test_compare_spot_check_hashes_returns_relative_paths_having_failing_hashes(
         'hash2  bar',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'nothash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'nothash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1286,8 +1287,8 @@ def test_compare_spot_check_hashes_handles_data_sample_percentage_above_100():
         'hash2  /bar',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'nothash1', 'path': 'foo'},
-        {'xxh64': 'nothash2', 'path': 'bar'},
+        {'xxh64': 'nothash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'nothash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1329,8 +1330,8 @@ def test_compare_spot_check_hashes_uses_xxh64sum_command_option():
         working_directory=None,
     ).and_yield('hash1  /foo', 'hash2  /bar')
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'nothash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'nothash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1369,7 +1370,7 @@ def test_compare_spot_check_hashes_considers_path_missing_from_archive_as_not_ma
         'hash2  /bar',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'}
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''}
     )
 
     assert module.compare_spot_check_hashes(
@@ -1391,6 +1392,50 @@ def test_compare_spot_check_hashes_considers_path_missing_from_archive_as_not_ma
     ) == ('/bar',)
 
 
+def test_compare_spot_check_hashes_skips_hardlink_path_in_archive():
+    flexmock(module.random).should_receive('SystemRandom').and_return(
+        flexmock(sample=lambda population, count: population[:count]),
+    )
+    flexmock(module.borgmatic.config.paths).should_receive('get_working_directory').and_return(
+        None,
+    )
+    flexmock(module.os.path).should_receive('exists').and_return(True)
+    flexmock(module.os.path).should_receive('islink').and_return(False)
+    flexmock(module.borgmatic.execute).should_receive(
+        'execute_command_and_capture_output',
+    ).with_args(('xxh64sum', '/foo', '/bar', '/link'), working_directory=None).and_yield(
+        'hash1  /foo',
+        'hash2  /bar',
+        'hash1  /link',
+    )
+    flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'hash2', 'path': 'bar', 'linktarget': ''},
+        {'xxh64': '', 'path': 'link', 'linktarget': 'foo'},
+    )
+
+    assert (
+        module.compare_spot_check_hashes(
+            repository={'path': 'repo'},
+            archive='archive',
+            config={
+                'checks': [
+                    {
+                        'name': 'spot',
+                        'data_sample_percentage': 100,
+                    },
+                ],
+            },
+            local_borg_version=flexmock(),
+            global_arguments=flexmock(),
+            local_path=flexmock(),
+            remote_path=flexmock(),
+            source_paths=('/foo', '/bar', '/link'),
+        )
+        == ()
+    )
+
+
 def test_compare_spot_check_hashes_considers_symlink_path_as_not_matching():
     flexmock(module.random).should_receive('SystemRandom').and_return(
         flexmock(sample=lambda population, count: population[:count]),
@@ -1405,8 +1450,8 @@ def test_compare_spot_check_hashes_considers_symlink_path_as_not_matching():
         'execute_command_and_capture_output',
     ).with_args(('xxh64sum', '/foo'), working_directory=None).and_yield('hash1  /foo')
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'hash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'hash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1442,8 +1487,8 @@ def test_compare_spot_check_hashes_considers_non_existent_path_as_not_matching()
         'execute_command_and_capture_output',
     ).with_args(('xxh64sum', '/foo'), working_directory=None).and_yield('hash1  /foo')
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'hash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'hash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1488,11 +1533,11 @@ def test_compare_spot_check_hashes_with_too_many_paths_feeds_them_to_commands_in
         'hash4  /quux',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'hash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'hash2', 'path': 'bar', 'linktarget': ''},
     ).and_yield(
-        {'xxh64': 'hash3', 'path': 'baz'},
-        {'xxh64': 'nothash4', 'path': 'quux'},
+        {'xxh64': 'hash3', 'path': 'baz', 'linktarget': ''},
+        {'xxh64': 'nothash4', 'path': 'quux', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
@@ -1535,8 +1580,8 @@ def test_compare_spot_check_hashes_uses_working_directory_to_access_source_paths
         'hash2  bar',
     )
     flexmock(module.borgmatic.borg.list).should_receive('capture_archive_listing').and_yield(
-        {'xxh64': 'hash1', 'path': 'foo'},
-        {'xxh64': 'nothash2', 'path': 'bar'},
+        {'xxh64': 'hash1', 'path': 'foo', 'linktarget': ''},
+        {'xxh64': 'nothash2', 'path': 'bar', 'linktarget': ''},
     )
 
     assert module.compare_spot_check_hashes(
