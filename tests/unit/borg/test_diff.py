@@ -3,15 +3,11 @@ from flexmock import flexmock
 import borgmatic.borg.diff
 import borgmatic.borg.environment
 import borgmatic.borg.feature
-import borgmatic.config.paths
 import borgmatic.execute
 from borgmatic.borg import flags
 
 
 def test_diff_calls_execute_command():
-    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
-    flexmock(borgmatic.config.paths).should_receive('get_working_directory').and_return(None)
-    flexmock(borgmatic.execute).should_receive('execute_command').once()
     flexmock(borgmatic.borg.feature).should_receive('available').and_return(False)
     flexmock(flags).should_receive('make_repository_flags').and_return(())
     flexmock(flags).should_receive('make_match_archives_flags').and_return(())
@@ -19,6 +15,8 @@ def test_diff_calls_execute_command():
     flexmock(borgmatic.borg.pattern).should_receive('write_patterns_file').and_return(
         flexmock(name='test')
     )
+    flexmock(borgmatic.execute).should_receive('execute_command').once()
+    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
 
     borgmatic.borg.diff.diff(
         repository='repo',
@@ -27,7 +25,6 @@ def test_diff_calls_execute_command():
         local_borg_version=None,
         diff_arguments=flexmock(
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,
@@ -41,9 +38,6 @@ def test_diff_calls_execute_command():
 
 
 def test_diff_with_numeric_ids_flag():
-    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
-    flexmock(borgmatic.config.paths).should_receive('get_working_directory').and_return(None)
-    flexmock(borgmatic.execute).should_receive('execute_command').once()
     flexmock(borgmatic.borg.feature).should_receive('available').and_return(True)
     flexmock(flags).should_receive('make_repository_flags').and_return(())
     flexmock(flags).should_receive('make_match_archives_flags').and_return(())
@@ -51,6 +45,8 @@ def test_diff_with_numeric_ids_flag():
     flexmock(borgmatic.borg.pattern).should_receive('write_patterns_file').and_return(
         flexmock(name='test')
     )
+    flexmock(borgmatic.execute).should_receive('execute_command').once()
+    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
 
     borgmatic.borg.diff.diff(
         repository='repo',
@@ -59,7 +55,6 @@ def test_diff_with_numeric_ids_flag():
         local_borg_version=None,
         diff_arguments=flexmock(
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,
@@ -73,9 +68,6 @@ def test_diff_with_numeric_ids_flag():
 
 
 def test_diff_with_numeric_ids_flag_false():
-    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
-    flexmock(borgmatic.config.paths).should_receive('get_working_directory').and_return(None)
-    flexmock(borgmatic.execute).should_receive('execute_command').once()
     flexmock(borgmatic.borg.feature).should_receive('available').and_return(True)
     flexmock(flags).should_receive('make_repository_flags').and_return(())
     flexmock(flags).should_receive('make_match_archives_flags').and_return(())
@@ -83,6 +75,8 @@ def test_diff_with_numeric_ids_flag_false():
     flexmock(borgmatic.borg.pattern).should_receive('write_patterns_file').and_return(
         flexmock(name='test')
     )
+    flexmock(borgmatic.execute).should_receive('execute_command').once()
+    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
 
     borgmatic.borg.diff.diff(
         repository='repo',
@@ -91,7 +85,6 @@ def test_diff_with_numeric_ids_flag_false():
         local_borg_version=None,
         diff_arguments=flexmock(
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,
@@ -105,9 +98,6 @@ def test_diff_with_numeric_ids_flag_false():
 
 
 def test_diff_with_only_patterns():
-    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
-    flexmock(borgmatic.config.paths).should_receive('get_working_directory').and_return(None)
-    flexmock(borgmatic.execute).should_receive('execute_command').once()
     flexmock(borgmatic.borg.feature).should_receive('available').and_return(True)
     flexmock(flags).should_receive('make_repository_flags').and_return(())
     flexmock(flags).should_receive('make_match_archives_flags').and_return(())
@@ -115,15 +105,16 @@ def test_diff_with_only_patterns():
     flexmock(borgmatic.borg.pattern).should_receive('write_patterns_file').and_return(
         flexmock(name='test')
     )
+    flexmock(borgmatic.execute).should_receive('execute_command').once()
+    flexmock(borgmatic.borg.environment).should_receive('make_environment').and_return({})
 
     borgmatic.borg.diff.diff(
         repository='repo',
         archive='archive',
-        config={'numeric_ids': True},
+        config={},
         local_borg_version=None,
         diff_arguments=flexmock(
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,

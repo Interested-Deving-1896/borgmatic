@@ -11,7 +11,6 @@ def test_run_actions_with_diff_calls_diff_action():
         'diff': flexmock(
             archive='archive1',
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,
@@ -42,7 +41,6 @@ def test_run_actions_with_diff_and_dry_run_calls_diff_action():
         'diff': flexmock(
             archive='archive1',
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,

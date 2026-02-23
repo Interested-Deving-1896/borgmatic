@@ -19,12 +19,15 @@ def run_diff(
     Run the "diff" action for the given repository.
     '''
 
-    # Collect and process patterns.
-    processed_patterns = borgmatic.actions.pattern.process_patterns(
-        (*borgmatic.actions.pattern.collect_patterns(config),),
-        config,
-        borgmatic.config.paths.get_working_directory(config),
-    )
+    # Only process patterns if only_patterns flag is set
+    if diff_arguments.only_patterns:
+        processed_patterns = borgmatic.actions.pattern.process_patterns(
+            (*borgmatic.actions.pattern.collect_patterns(config),),
+            config,
+            borgmatic.config.paths.get_working_directory(config),
+        )
+    else:
+        processed_patterns = None
 
     archive = borgmatic.borg.repo_list.resolve_archive_name(
         repository['path'],

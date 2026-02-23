@@ -11,7 +11,6 @@ def test_run_configuration_with_diff_action_calls_run_diff():
         'diff': flexmock(
             archive='archive1',
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,
@@ -32,7 +31,6 @@ def test_run_configuration_with_diff_action_and_verbose_calls_run_diff():
         'diff': flexmock(
             archive='archive1',
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,
@@ -49,7 +47,6 @@ def test_run_configuration_with_diff_action_and_verbose_calls_run_diff():
         'diff': flexmock(
             archive='archive1',
             same_chunker_params=False,
-            sort_by=None,
             sort_keys=[],
             content_only=False,
             second_archive=None,
