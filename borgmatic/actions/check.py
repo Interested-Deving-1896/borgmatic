@@ -763,7 +763,7 @@ def spot_check(
             placeholder=' ...',
         )
         raise ValueError(
-            f'Spot check failed\n{failing_percentage:.2f}% of source paths ({len(failing_paths)} total) with data not matching the latest archive; tolerance is {data_tolerance_percentage}%\nSource paths with non-matching data: {truncated_failing_paths}',
+            f'Spot check failed\n{failing_percentage:.2f}% of source paths ({len(failing_paths)} out of {len(source_paths)} checked) with data not matching the latest archive; tolerance is {data_tolerance_percentage}%\nSource paths with non-matching data: {truncated_failing_paths}',
         )
 
     logger.info(
