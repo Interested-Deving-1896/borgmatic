@@ -10,3 +10,7 @@ eleventyNavigation:
 ```
 {% include borgmatic/command-line/diff.txt %}
 ```
+
+## Related documentation
+
+* [Finding differences](https://torsion.org/borgmatic/how-to/inspect-your-backups/#finding-differences-between-two-archives)
