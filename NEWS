@@ -5,6 +5,7 @@
    https://torsion.org/borgmatic/reference/command-line/actions/config-show/
  * #1228: Adjust the "spot" check so error output includes more information about what failed.
  * #1236: Fix the "spot" check to skip hard links, as Borg doesn't produces hashes for them.
+ * #1243: Add a "diff" action for viewing the difference between the contents of two archives.
  * #1269: Fix the ZFS hook to support datasets with a "canmount" property of "noauto".
  * #1270: Follow symlinks when backing up borgmatic configuration files to support the "bootstrap"
    action.
