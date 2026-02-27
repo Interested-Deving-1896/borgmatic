@@ -116,3 +116,22 @@ By default, borgmatic only logs to the console. But to enable simultaneous
 syslog or file logging, see the [logging
 documentation](https://torsion.org/borgmatic/reference/command-line/logging/)
 for details.
+
+## Finding differences between two archives
+
+<span class="minilink minilink-addedin">New in borgmatic version
+2.1.3</span>You can compare differences between two archives. For example:
+
+```bash
+borgmatic diff --archive latest --second-archive host-2023-01-02T04:06:07.080910
+```
+
+This shows the differences (file contents, user/group/mode) between the latest
+archive and the second one supplied.
+
+Note that, by default, `borgmatic diff` compares everything in the archives; that
+is, patterns are _not_ taken into consideration. If you require this, supply the
+`--only-patterns` flag.
+
+See the [`borgbackup`](https://borgbackup.readthedocs.io/en/stable/usage/diff.html)
+documentation for information on output format, what is compared, and more.

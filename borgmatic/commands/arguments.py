@@ -33,6 +33,7 @@ ACTION_ALIASES = {
     'key': [],
     'borg': [],
     'recreate': [],
+    'diff': [],
 }
 
 
@@ -1993,6 +1994,47 @@ def make_parsers(schema, unparsed_arguments):  # noqa: PLR0915
         help='Show this help message and exit',
     )
 
+    diff_parser = action_parsers.add_parser(
+        'diff',
+        aliases=ACTION_ALIASES['diff'],
+        help='This command finds differences (file contents, user/group/mode) between archives',
+        description='This command finds differences (file contents, user/group/mode) between archives',
+    )
+    diff_group = diff_parser.add_argument_group('diff arguments')
+    diff_group.add_argument(
+        '--repository',
+        help='Path of repository containing archive to diff, defaults to the configured repository if there is only one, quoted globs supported',
+    )
+    diff_group.add_argument(
+        '--archive',
+        help='Archive name, hash, or series to diff',
+        required=True,
+    )
+    diff_group.add_argument(
+        '--second-archive',
+        help='Second archive name, hash, or series to diff',
+        required=True,
+    )
+    diff_group.add_argument(
+        '--same-chunker-params', action='store_true', help='Override check of chunker parameters'
+    )
+    diff_group.add_argument(
+        '--sort-by',
+        metavar='KEY',
+        dest='sort_keys',
+        action='append',
+        help='Advanced sorting: specify field(s) to sort by. Prefix with > for descending or < for ascending (default)',
+    )
+    diff_group.add_argument(
+        '--content-only',
+        action='store_true',
+        help='Only compare differences in content (exclude metadata differences)',
+    )
+    diff_group.add_argument(
+        '--only-patterns',
+        action='store_true',
+        help='Run the diff according to borgmatic configured patterns (ie do not diff entire archives)',
+    )
     borg_parser = action_parsers.add_parser(
         'borg',
         aliases=ACTION_ALIASES['borg'],

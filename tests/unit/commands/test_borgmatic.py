@@ -2689,3 +2689,27 @@ def test_get_singular_option_value_with_no_config_returns_none():
         )
         is None
     )
+
+
+def test_run_actions_runs_diff():
+    flexmock(module).should_receive('add_custom_log_levels')
+    flexmock(module).should_receive('get_skip_actions').and_return([])
+    flexmock(module.borgmatic.config.validate).should_receive('repositories_match').never()
+    flexmock(module.borgmatic.config.paths).should_receive('get_working_directory').and_return(
+        flexmock(),
+    )
+    flexmock(module.command).should_receive('Before_after_hooks').and_return(flexmock())
+    flexmock(borgmatic.actions.diff).should_receive('run_diff').once()
+
+    tuple(
+        module.run_actions(
+            arguments={'global': flexmock(dry_run=False), 'diff': flexmock()},
+            config_filename=flexmock(),
+            config={'repositories': []},
+            config_paths=[],
+            local_path=flexmock(),
+            remote_path=flexmock(),
+            local_borg_version=flexmock(),
+            repository={'path': 'repo'},
+        ),
+    )

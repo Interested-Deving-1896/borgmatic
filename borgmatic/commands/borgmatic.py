@@ -21,6 +21,7 @@ import borgmatic.actions.config.show
 import borgmatic.actions.config.validate
 import borgmatic.actions.create
 import borgmatic.actions.delete
+import borgmatic.actions.diff
 import borgmatic.actions.export_key
 import borgmatic.actions.export_tar
 import borgmatic.actions.extract
@@ -615,6 +616,16 @@ def run_actions(  # noqa: PLR0912, PLR0915
                     )
                 elif action_name == 'repo-delete':
                     borgmatic.actions.repo_delete.run_repo_delete(
+                        repository,
+                        config,
+                        local_borg_version,
+                        action_arguments,
+                        global_arguments,
+                        local_path,
+                        remote_path,
+                    )
+                elif action_name == 'diff':
+                    borgmatic.actions.diff.run_diff(
                         repository,
                         config,
                         local_borg_version,
