@@ -717,7 +717,7 @@ def spot_check(
         )
         logger.debug(f'Paths in latest archive but not source paths: {truncated_archive_paths}')
         raise ValueError(
-            'Spot check failed: There are no source paths to compare against the archive',
+            'Spot check failed; there are no source paths to compare against the archive',
         )
 
     # Calculate the percentage delta between the source paths count and the archive paths count, and
@@ -731,19 +731,13 @@ def spot_check(
             width=MAX_SPOT_CHECK_PATHS_LENGTH,
             placeholder=' ...',
         )
-        logger.debug(
-            f'Paths in source paths but not latest archive: {truncated_exclusive_source_paths}',
-        )
         truncated_exclusive_archive_paths = textwrap.shorten(
             ', '.join(set(archive_paths) - rootless_source_paths) or 'none',
             width=MAX_SPOT_CHECK_PATHS_LENGTH,
             placeholder=' ...',
         )
-        logger.debug(
-            f'Paths in latest archive but not source paths: {truncated_exclusive_archive_paths}',
-        )
         raise ValueError(
-            f'Spot check failed: {count_delta_percentage:.2f}% file count delta between source paths and latest archive (tolerance is {spot_check_config["count_tolerance_percentage"]}%)',
+            f'Spot check failed\n{count_delta_percentage:.2f}% file count delta between source paths ({len(source_paths)} total) and latest archive ({len(archive_paths)} total); tolerance is {spot_check_config["count_tolerance_percentage"]}%\nOnly in source paths: {truncated_exclusive_source_paths}\nOnly in latest archive: {truncated_exclusive_archive_paths}',
         )
 
     failing_paths = compare_spot_check_hashes(
@@ -768,11 +762,8 @@ def spot_check(
             width=MAX_SPOT_CHECK_PATHS_LENGTH,
             placeholder=' ...',
         )
-        logger.debug(
-            f'Source paths with data not matching the latest archive: {truncated_failing_paths}',
-        )
         raise ValueError(
-            f'Spot check failed: {failing_percentage:.2f}% of source paths with data not matching the latest archive (tolerance is {data_tolerance_percentage}%)',
+            f'Spot check failed\n{failing_percentage:.2f}% of source paths ({len(failing_paths)} out of {len(source_paths)} checked) with data not matching the latest archive; tolerance is {data_tolerance_percentage}%\nSource paths with non-matching data: {truncated_failing_paths}',
         )
 
     logger.info(
