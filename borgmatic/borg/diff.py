@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 def diff(
     repository,
     archive,
+    second_archive,
     config,
     local_borg_version,
     diff_arguments,
@@ -23,7 +24,7 @@ def diff(
     patterns=None,
 ):
     '''
-    Given a local or remote repository path, an archive name, a configuration dict, the local Borg
+    Given a local or remote repository path, two archive names, a configuration dict, the local Borg
     version string, an argparse.Namespace of diff arguments, an argparse.Namespace of global
     arguments, optional local and remote Borg paths, executes the diff command with the given
     arguments.
@@ -64,26 +65,19 @@ def diff(
         )
         + exclude_flags
         + numeric_ids_flags
+        + (('--same-chunker-params',) if diff_arguments.same_chunker_params else ())
+        + (('--sort-by', ','.join(diff_arguments.sort_keys)) if diff_arguments.sort_keys else ())
+        + (('--content-only',) if diff_arguments.content_only else ())
         + (tuple(shlex.split(extra_borg_options)) if extra_borg_options else ())
         + (
-            (
-                flags.make_repository_flags(repository, local_borg_version)
-                + flags.make_match_archives_flags(
-                    archive or config.get('match_archives'),
-                    config.get('archive_name_format'),
-                    local_borg_version,
-                )
-            )
+            (*flags.make_repository_flags(repository, local_borg_version), archive)
             if borgmatic.borg.feature.available(
                 borgmatic.borg.feature.Feature.SEPARATE_REPOSITORY_ARCHIVE,
                 local_borg_version,
             )
             else flags.make_repository_archive_flags(repository, archive, local_borg_version)
         )
-        + (('--same-chunker-params',) if diff_arguments.same_chunker_params else ())
-        + (('--sort-by', ','.join(diff_arguments.sort_keys)) if diff_arguments.sort_keys else ())
-        + (('--content-only',) if diff_arguments.content_only else ())
-        + (diff_arguments.second_archive,)
+        + (second_archive,)
     )
 
     borgmatic.execute.execute_command(

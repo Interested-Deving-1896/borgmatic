@@ -133,5 +133,5 @@ Note that, by default, `borgmatic diff` compares everything in the archives; tha
 is, patterns are _not_ taken into consideration. If you require this, supply the
 `--only-patterns` flag.
 
-See the [`borgbackup`](https://borgbackup.readthedocs.io/en/stable/usage/diff.html)
+See the [Borg](https://borgbackup.readthedocs.io/en/stable/usage/diff.html)
 documentation for information on output format, what is compared, and more.

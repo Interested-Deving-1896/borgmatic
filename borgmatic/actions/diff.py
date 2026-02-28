@@ -38,10 +38,20 @@ def run_diff(
         local_path,
         remote_path,
     )
+    second_archive = borgmatic.borg.repo_list.resolve_archive_name(
+        repository['path'],
+        diff_arguments.second_archive,
+        config,
+        local_borg_version,
+        global_arguments,
+        local_path,
+        remote_path,
+    )
 
     borgmatic.borg.diff.diff(
         repository['path'],
         archive,
+        second_archive,
         config,
         local_borg_version,
         diff_arguments,

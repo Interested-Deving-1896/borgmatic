@@ -6,7 +6,7 @@ from borgmatic.actions import diff as module
 def test_run_diff_calls_borg_diff():
     flexmock(module.borgmatic.borg.repo_list).should_receive('resolve_archive_name').and_return(
         'archive'
-    )
+    ).and_return('archive2')
     flexmock(module.borgmatic.config.paths).should_receive('get_working_directory').and_return(
         flexmock(),
     )
@@ -42,7 +42,7 @@ def test_run_diff_with_only_patterns():
     )
     flexmock(module.borgmatic.borg.repo_list).should_receive('resolve_archive_name').and_return(
         'archive'
-    )
+    ).and_return('archive2')
     flexmock(module.borgmatic.borg.diff).should_receive('diff').once()
 
     module.borgmatic.actions.diff.run_diff(
